@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <title>Pokemon</title>
+  </head>
+
+  <body>
+    <h1>Pokemon</h1>
+
+    <form id="myForm">
+      <div style="display: flex">
+        <div>
+          <input
+            type="text"
+            id="search"
+            name="search"
+            value="ditto"
+            placeholder="Search Pokemon"
+          />
+        </div>
+
+        <div>
+          <input type="submit" value="Search" />
+        </div>
+      </div>
+    </form>
+
+    <div class="flip-card" style="display: none">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <img id="pokemonImage" alt="Avatar" />
+        </div>
+        <div class="flip-card-back"></div>
+      </div>
+      <div style="padding-top: 8px">
+        <button onclick="saveToCarousel()">Save</button>
+      </div>
+    </div>
+
+    <!-- <div class="slideshow-container">
+      <div class="mySlides fade">
+        <div class="numbertext">1 / 3</div>
+        <img src="img_nature_wide.jpg" style="width: 100%" />
+        <div class="text">Caption Text</div>
+      </div>
+
+      <div class="mySlides fade">
+        <div class="numbertext">2 / 3</div>
+        <img src="img_snow_wide.jpg" style="width: 100%" />
+        <div class="text">Caption Two</div>
+      </div>
+
+      <div class="mySlides fade">
+        <div class="numbertext">3 / 3</div>
+        <img src="img_mountains_wide.jpg" style="width: 100%" />
+        <div class="text">Caption Three</div>
+      </div>
+
+      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+      <a class="next" onclick="plusSlides(1)">&#10095;</a>
+    </div> -->
+    <br />
+
+    <script src="index.js"></script>
+  </body>
+</html>
