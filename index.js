@@ -1,4 +1,5 @@
 const thisForm = document.getElementById("myForm");
+const inputSearch = document.getElementById("search");
 const cardBack = document.querySelector(".flip-card-back");
 const carousel = document.querySelector(".carousel");
 const carouselContainer = document.querySelector(".carouselContainer");
@@ -18,6 +19,20 @@ const geyPokemonByNameOrId = async (searchValue) => {
 function getUniqueListBy(arr, key) {
   return [...new Map(arr.map((item) => [item[key], item])).values()];
 }
+
+const initialLoad = () => {
+  const searched = localStorage.getItem("searchedPokemon");
+  const searchValue = localStorage.getItem("searchValue");
+
+  const searchedPokemon = JSON.parse(searched);
+
+  inputSearch.value = JSON.parse(searchValue);
+
+  if (searchedPokemon) {
+    card.style.display = "block";
+    setInnerHtmlOfCard(searchedPokemon);
+  }
+};
 
 thisForm.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -40,44 +55,12 @@ thisForm.addEventListener("submit", async function (e) {
     JSON.stringify(uniqueSearchedPokemons)
   );
 
-  document.getElementById("pokemonImage").src = result.sprites.front_default;
+  localStorage.setItem("searchValue", JSON.stringify(inputSearch.value));
 
   const searchedPokemonImg = result.sprites.front_default;
   const searchedPokemonId = result.id;
 
-  pokemonEl.innerHTML = `
-  
-        <div class="pokemonName">${result.forms[0].name}</div>
-            <div class="stats">
-    <div class="title">Stats</div>
-      ${result.stats
-        .slice(0, 3)
-        .map((stat) => {
-          return `<div>${stat.stat.name}: ${stat.base_stat}</div>`;
-        })
-        .join("")}
-    </div>
-
-    <div class="abilities">
-    <div class="title">Abilities</div>
-    ${result.abilities
-      .slice(0, 3)
-      .map((ability) => {
-        return `<div>${ability.ability.name}</div>`;
-      })
-      .join("")}
-    <div>
-
-    <div class="moves">
-    <div class="title">Moves</div>
-    ${result.moves
-      .slice(0, 3)
-      .map((move) => {
-        return `<div>${move.move.name}</div>`;
-      })
-      .join("")}
-    <div>
-  `;
+  setInnerHtmlOfCard(result);
 
   saveBtn.innerHTML = `
    <div>
@@ -85,7 +68,6 @@ thisForm.addEventListener("submit", async function (e) {
    </div>
    `;
 
-  cardBack.appendChild(pokemonEl);
   card.appendChild(saveBtn);
 });
 
@@ -116,42 +98,45 @@ const displayOnDeck = (pokemonId) => {
     (val) => val.id === JSON.parse(pokemonId)
   );
 
-  document.getElementById("pokemonImage").src =
-    selectedPokemon.sprites.front_default;
+  setInnerHtmlOfCard(selectedPokemon);
+};
+
+const setInnerHtmlOfCard = (pokemon) => {
+  document.getElementById("pokemonImage").src = pokemon.sprites.front_default;
 
   pokemonEl.innerHTML = `
-  
-        <div class="pokemonName">${selectedPokemon.forms[0].name}</div>
-            <div class="stats">
-    <div class="title">Stats</div>
-      ${selectedPokemon.stats
-        .slice(0, 3)
-        .map((stat) => {
-          return `<div>${stat.stat.name}: ${stat.base_stat}</div>`;
-        })
-        .join("")}
-    </div>
 
-    <div class="abilities">
-    <div class="title">Abilities</div>
-    ${selectedPokemon.abilities
+      <div class="pokemonName">${pokemon.forms[0].name}</div>
+          <div class="stats">
+  <div class="title">Stats</div>
+    ${pokemon.stats
       .slice(0, 3)
-      .map((ability) => {
-        return `<div>${ability.ability.name}</div>`;
+      .map((stat) => {
+        return `<div>${stat.stat.name}: ${stat.base_stat}</div>`;
       })
       .join("")}
-    <div>
+  </div>
 
-    <div class="moves">
-    <div class="title">Moves</div>
-    ${selectedPokemon.moves
-      .slice(0, 3)
-      .map((move) => {
-        return `<div>${move.move.name}</div>`;
-      })
-      .join("")}
-    <div>
-  `;
+  <div class="abilities">
+  <div class="title">Abilities</div>
+  ${pokemon.abilities
+    .slice(0, 3)
+    .map((ability) => {
+      return `<div>${ability.ability.name}</div>`;
+    })
+    .join("")}
+  <div>
+
+  <div class="moves">
+  <div class="title">Moves</div>
+  ${pokemon.moves
+    .slice(0, 3)
+    .map((move) => {
+      return `<div>${move.move.name}</div>`;
+    })
+    .join("")}
+  <div>
+`;
 
   cardBack.appendChild(pokemonEl);
 };
