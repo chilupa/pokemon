@@ -6,7 +6,6 @@ const carouselContainer = document.querySelector(".carouselContainer");
 const card = document.querySelector(".flip-card");
 
 const pokemonEl = document.createElement("div");
-const saveBtn = document.createElement("div");
 const slide = document.createElement("div");
 
 const pokemons = [];
@@ -42,37 +41,36 @@ thisForm.addEventListener("submit", async function (e) {
 
   const response = await geyPokemonByNameOrId(searchValue);
 
-  const result = await response.json();
+  console.log("response", response);
+  if (response.status === 200) {
+    const result = await response.json();
 
-  localStorage.setItem("searchedPokemon", JSON.stringify(result));
+    localStorage.setItem("searchedPokemon", JSON.stringify(result));
 
-  searchedPokemons.push(result);
+    searchedPokemons.push(result);
 
-  const uniqueSearchedPokemons = getUniqueListBy(searchedPokemons, "id");
+    const uniqueSearchedPokemons = getUniqueListBy(searchedPokemons, "id");
 
-  localStorage.setItem(
-    "uniqueSearchedPokemons",
-    JSON.stringify(uniqueSearchedPokemons)
-  );
+    localStorage.setItem(
+      "uniqueSearchedPokemons",
+      JSON.stringify(uniqueSearchedPokemons)
+    );
 
-  localStorage.setItem("searchValue", JSON.stringify(inputSearch.value));
+    localStorage.setItem("searchValue", JSON.stringify(inputSearch.value));
 
-  const searchedPokemonImg = result.sprites.front_default;
-  const searchedPokemonId = result.id;
+    setInnerHtmlOfCard(result);
+  }
 
-  setInnerHtmlOfCard(result);
-
-  saveBtn.innerHTML = `
-   <div>
-   <button style="margin-top: 24px" onclick="saveToCarousel('${searchedPokemonImg}', '${searchedPokemonId}')">Save</button>
-   </div>
-   `;
-
-  card.appendChild(saveBtn);
+  if (response.status === 404) {
+    alert("Pokemon not found. Please try again.");
+  }
 });
 
-const saveToCarousel = (img, id) => {
+const saveToCarousel = () => {
   carouselContainer.style.display = "block";
+  const img = document.getElementById("pokemonImage").src;
+  const id = document.getElementById("search").value;
+  console.log("id", id);
   pokemons.push({ id, img });
 
   const uniquePokemons = getUniqueListBy(pokemons, "id");
