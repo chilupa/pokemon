@@ -5,7 +5,9 @@ const carousel = document.querySelector(".carousel");
 const carouselContainer = document.querySelector(".carouselContainer");
 const card = document.querySelector(".flip-card");
 
-const pokemonEl = document.createElement("div");
+const stats = document.createElement("div");
+const abilities = document.createElement("div");
+const moves = document.createElement("div");
 const slide = document.createElement("div");
 
 const pokemons = [];
@@ -41,7 +43,6 @@ thisForm.addEventListener("submit", async function (e) {
 
   const response = await geyPokemonByNameOrId(searchValue);
 
-  console.log("response", response);
   if (response.status === 200) {
     const result = await response.json();
 
@@ -68,12 +69,12 @@ thisForm.addEventListener("submit", async function (e) {
 
 const saveToCarousel = () => {
   carouselContainer.style.display = "block";
-  const img = document.getElementById("pokemonImage").src;
   const id = document.getElementById("search").value;
-  console.log("id", id);
+  const img = document.getElementById("pokemonImage").src;
+
   pokemons.push({ id, img });
 
-  const uniquePokemons = getUniqueListBy(pokemons, "id");
+  const uniquePokemons = getUniqueListBy(pokemons, "img");
 
   localStorage.setItem("savedPokemons", uniquePokemons);
 
@@ -99,12 +100,13 @@ const displayOnDeck = (pokemonId) => {
   setInnerHtmlOfCard(selectedPokemon);
 };
 
-const setInnerHtmlOfCard = (pokemon) => {
-  document.getElementById("pokemonImage").src = pokemon.sprites.front_default;
+const renderPokemonName = (pokemon) => {
+  const pokemonNameEl = document.querySelector(".pokemonName");
+  pokemonNameEl.textContent = pokemon.forms[0].name;
+};
 
-  pokemonEl.innerHTML = `
-
-      <div class="pokemonName">${pokemon.forms[0].name}</div>
+const renderStats = (pokemon) => {
+  stats.innerHTML = `
           <div class="stats">
   <div class="title">Stats</div>
     ${pokemon.stats
@@ -113,9 +115,13 @@ const setInnerHtmlOfCard = (pokemon) => {
         return `<div>${stat.stat.name}: ${stat.base_stat}</div>`;
       })
       .join("")}
-  </div>
+  </div>`;
 
-  <div class="abilities">
+  cardBack.appendChild(stats);
+};
+
+const renderAbilities = (pokemon) => {
+  abilities.innerHTML = `  <div class="abilities">
   <div class="title">Abilities</div>
   ${pokemon.abilities
     .slice(0, 3)
@@ -123,9 +129,13 @@ const setInnerHtmlOfCard = (pokemon) => {
       return `<div>${ability.ability.name}</div>`;
     })
     .join("")}
-  <div>
+  <div>`;
 
-  <div class="moves">
+  cardBack.appendChild(abilities);
+};
+
+const renderMoves = (pokemon) => {
+  moves.innerHTML = `   <div class="moves">
   <div class="title">Moves</div>
   ${pokemon.moves
     .slice(0, 3)
@@ -133,8 +143,16 @@ const setInnerHtmlOfCard = (pokemon) => {
       return `<div>${move.move.name}</div>`;
     })
     .join("")}
-  <div>
-`;
+  <div>`;
 
-  cardBack.appendChild(pokemonEl);
+  cardBack.appendChild(moves);
+};
+
+const setInnerHtmlOfCard = (pokemon) => {
+  document.getElementById("pokemonImage").src = pokemon.sprites.front_default;
+
+  renderPokemonName(pokemon);
+  renderStats(pokemon);
+  renderAbilities(pokemon);
+  renderMoves(pokemon);
 };
